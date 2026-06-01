@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Liora.ai — AI-разработчик • Якутия</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #080810;
+  --surface: #0f0f1a;
+  --card: #13131f;
+  --card2: #17172a;
+  --accent: #7c6af7;
+  --accent2: #a78bfa;
+  --accent3: #e2c97e;
+  --text: #eeedf5;
+  --muted: #7a7990;
+  --border: rgba(124,106,247,0.18);
+  --border2: rgba(255,255,255,0.06);
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; font-size: 16px; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  overflow-x: hidden;
+  line-height: 1.6;
+}
+
+/* SCROLLBAR */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 2px; }
+
+/* NOISE */
+body::after {
+  content: '';
+  position: fixed; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 9000;
+  opacity: 0.5;
+}
+
+/* BLOBS */
+.blob {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(100px);
+  pointer-events: none;
+  z-index: 0;
+  animation: blobFloat 10s ease-in-out infinite;
+}
+.blob1 { width: 500px; height: 500px; background: rgba(124,106,247,0.07); top: -150px; right: -150px; }
+.blob2 { width: 350px; height: 350px; background: rgba(167,139,250,0.05); bottom: 10%; left: -100px; animation-delay: -5s; }
+.blob3 { width: 250px; height: 250px; background: rgba(226,201,126,0.04); top: 50%; right: 5%; animation-delay: -3s; }
+@keyframes blobFloat {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-40px) scale(1.06); }
+}
+
+/* NAV */
+nav {
+  position: fixed; top: 0; width: 100%; z-index: 500;
+  padding: 20px 56px;
+  display: flex; justify-content: space-between; align-items: center;
+  background: rgba(8,8,16,0.85);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+.nav-logo {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.02em;
+}
+.nav-logo span { color: var(--accent); }
+.nav-links { display: flex; gap: 36px; }
+.nav-links a {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--muted);
+  text-decoration: none;
+  letter-spacing: 0.04em;
+  transition: color 0.2s;
+}
+.nav-links a:hover { color: var(--text); }
+.nav-cta {
+  padding: 10px 22px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: 8px;
+  transition: opacity 0.2s, transform 0.2s;
+}
+.nav-cta:hover { opacity: 0.85; transform: translateY(-1px); }
+
+/* HERO */
+.hero {
+  min-height: 100vh;
+  display: flex; align-items: center;
+  padding: 140px 56px 100px;
+  position: relative; z-index: 1;
+}
+.hero-inner { max-width: 820px; }
+
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  color: var(--accent2);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  margin-bottom: 36px;
+  padding: 8px 16px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: rgba(124,106,247,0.06);
+}
+.hero-badge-dot {
+  width: 6px; height: 6px;
+  background: var(--accent);
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.7); }
+}
+
+.hero h1 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(48px, 7.5vw, 88px);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  margin-bottom: 28px;
+}
+.hero h1 .line1 { color: var(--text); display: block; }
+.hero h1 .line2 {
+  display: block;
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 50%, var(--accent3) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero-desc {
+  max-width: 540px;
+  font-size: 17px;
+  line-height: 1.75;
+  color: var(--muted);
+  margin-bottom: 48px;
+}
+.hero-desc strong { color: var(--text); font-weight: 600; }
+
+.hero-cta { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; }
+.btn-primary {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 15px 30px;
+  background: var(--accent);
+  color: #fff;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 15px;
+  text-decoration: none;
+  border-radius: 10px;
+  transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
+  box-shadow: 0 0 40px rgba(124,106,247,0.35);
+}
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 0 60px rgba(124,106,247,0.5); }
+.btn-ghost {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 15px 30px;
+  border: 1px solid var(--border2);
+  color: var(--text);
+  font-size: 15px;
+  font-weight: 500;
+  text-decoration: none;
+  border-radius: 10px;
+  transition: border-color 0.2s, background 0.2s;
+}
+.btn-ghost:hover { border-color: var(--accent); background: rgba(124,106,247,0.06); }
+
+/* STATS BAR */
+.stats-bar {
+  display: flex; gap: 0; flex-wrap: wrap;
+  margin: 0 56px 80px;
+  border: 1px solid var(--border2);
+  border-radius: 16px;
+  overflow: hidden;
+  position: relative; z-index: 1;
+  background: var(--card);
+}
+.stat-item {
+  flex: 1; min-width: 140px;
+  padding: 32px 28px;
+  border-right: 1px solid var(--border2);
+  transition: background 0.3s;
+}
+.stat-item:last-child { border-right: none; }
+.stat-item:hover { background: var(--card2); }
+.stat-num {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 38px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+.stat-num span { color: var(--accent); }
+.stat-label {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 6px;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+}
+
+/* SECTION */
+section { padding: 100px 56px; position: relative; z-index: 1; }
+.section-eyebrow {
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  color: var(--accent);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
+.section-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(30px, 4.5vw, 48px);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  margin-bottom: 56px;
+  color: var(--text);
+}
+.section-title .hl {
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* DIVIDER */
+.divider {
+  height: 1px;
+  background: linear-gradient(to right, transparent, rgba(124,106,247,0.2), transparent);
+  margin: 0 56px;
+  position: relative; z-index: 1;
+}
+
+/* APPS GRID */
+.apps-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+.app-card {
+  background: var(--card);
+  border: 1px solid var(--border2);
+  border-radius: 16px;
+  padding: 32px 28px;
+  transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
+  position: relative;
+  overflow: hidden;
+  cursor: default;
+}
+.app-card::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(circle at top left, rgba(124,106,247,0.07), transparent 65%);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.app-card:hover { transform: translateY(-5px); border-color: var(--border); box-shadow: 0 24px 64px rgba(0,0,0,0.4); }
+.app-card:hover::after { opacity: 1; }
+
+.app-icon {
+  width: 48px; height: 48px;
+  background: rgba(124,106,247,0.12);
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px;
+  margin-bottom: 20px;
+  border: 1px solid rgba(124,106,247,0.15);
+}
+.app-name {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 10px;
+  color: var(--text);
+  letter-spacing: -0.01em;
+}
+.app-desc { font-size: 14px; color: var(--muted); line-height: 1.65; }
+.app-tag {
+  display: inline-block;
+  margin-top: 18px;
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  color: var(--accent3);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border: 1px solid rgba(226,201,126,0.2);
+  border-radius: 4px;
+}
+
+/* SERVICES */
+.services-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.service-card {
+  background: var(--card);
+  border: 1px solid var(--border2);
+  border-radius: 16px;
+  padding: 36px 32px;
+  transition: border-color 0.3s, transform 0.3s;
+  position: relative;
+  overflow: hidden;
+}
+.service-card:hover { border-color: var(--border); transform: translateY(-3px); }
+.service-num {
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  color: var(--accent);
+  opacity: 0.6;
+  margin-bottom: 16px;
+  letter-spacing: 0.1em;
+}
+.service-name {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 12px;
+  letter-spacing: -0.01em;
+}
+.service-desc {
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.7;
+  margin-bottom: 24px;
+}
+.service-price {
+  font-family: 'Space Mono', monospace;
+  font-size: 13px;
+  color: var(--accent2);
+  font-weight: 700;
+}
+.service-icon {
+  position: absolute;
+  top: 32px; right: 32px;
+  font-size: 28px;
+  opacity: 0.4;
+}
+
+/* ABOUT */
+.about-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: start;
+}
+.about-text p {
+  font-size: 16px;
+  line-height: 1.85;
+  color: var(--muted);
+  margin-bottom: 20px;
+}
+.about-text p strong { color: var(--text); font-weight: 600; }
+.about-pills { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 32px; }
+.pill {
+  padding: 7px 16px;
+  border: 1px solid var(--border2);
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--muted);
+  transition: border-color 0.2s, color 0.2s, background 0.2s;
+}
+.pill:hover { border-color: var(--accent); color: var(--text); background: rgba(124,106,247,0.06); }
+
+.about-right {}
+.quote-block {
+  background: var(--card);
+  border: 1px solid var(--border2);
+  border-radius: 16px;
+  padding: 40px;
+  margin-bottom: 20px;
+  position: relative;
+}
+.quote-block::before {
+  content: '"';
+  position: absolute;
+  top: 20px; left: 32px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 80px;
+  color: var(--accent);
+  opacity: 0.15;
+  line-height: 1;
+}
+.quote-block blockquote {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 1.6;
+  color: var(--text);
+  margin-bottom: 20px;
+  position: relative;
+}
+.quote-block cite {
+  font-size: 12px;
+  color: var(--accent);
+  font-style: normal;
+  font-family: 'Space Mono', monospace;
+  letter-spacing: 0.1em;
+}
+
+.about-metrics {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.metric-card {
+  background: var(--card);
+  border: 1px solid var(--border2);
+  border-radius: 12px;
+  padding: 24px 20px;
+  text-align: center;
+}
+.metric-val {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.02em;
+}
+.metric-val span { color: var(--accent); }
+.metric-label { font-size: 12px; color: var(--muted); margin-top: 4px; }
+
+/* CONTACT */
+.contact-section {
+  padding: 120px 56px;
+  position: relative; z-index: 1;
+  text-align: center;
+}
+.contact-section::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at center, rgba(124,106,247,0.07), transparent 65%);
+  pointer-events: none;
+}
+.contact-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(40px, 7vw, 76px);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  margin-bottom: 20px;
+  position: relative;
+}
+.contact-title .hl {
+  background: linear-gradient(135deg, var(--accent), var(--accent2), var(--accent3));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.contact-sub {
+  font-size: 17px;
+  color: var(--muted);
+  margin-bottom: 52px;
+  position: relative;
+  max-width: 480px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.7;
+}
+.contact-links {
+  display: flex; gap: 14px; justify-content: center; flex-wrap: wrap;
+  position: relative;
+}
+.contact-link {
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 16px 28px;
+  background: var(--card);
+  border: 1px solid var(--border2);
+  border-radius: 10px;
+  text-decoration: none;
+  color: var(--text);
+  font-size: 15px;
+  font-weight: 500;
+  transition: border-color 0.2s, transform 0.2s, background 0.2s, box-shadow 0.2s;
+}
+.contact-link:hover {
+  border-color: var(--accent);
+  transform: translateY(-3px);
+  background: rgba(124,106,247,0.07);
+  box-shadow: 0 12px 40px rgba(124,106,247,0.15);
+}
+.contact-link .icon { font-size: 18px; }
+.contact-link.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  box-shadow: 0 0 40px rgba(124,106,247,0.3);
+}
+.contact-link.primary:hover {
+  background: var(--accent2);
+  border-color: var(--accent2);
+  box-shadow: 0 0 60px rgba(167,139,250,0.4);
+}
+
+/* FOOTER */
+footer {
+  padding: 28px 56px;
+  border-top: 1px solid var(--border2);
+  display: flex; justify-content: space-between; align-items: center;
+  position: relative; z-index: 1;
+}
+footer p { font-size: 13px; color: var(--muted); }
+footer .accent-text { color: var(--accent); }
+
+/* SCROLL ANIMATIONS */
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.75s cubic-bezier(0.16,1,0.3,1), transform 0.75s cubic-bezier(0.16,1,0.3,1);
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.3s; }
+.reveal-delay-4 { transition-delay: 0.4s; }
+
+/* MOBILE */
+@media (max-width: 900px) {
+  nav { padding: 18px 24px; }
+  .nav-links { display: none; }
+  .hero { padding: 110px 24px 80px; }
+  .stats-bar { margin: 0 24px 60px; }
+  .stat-item { padding: 24px 20px; }
+  section { padding: 70px 24px; }
+  .apps-grid { grid-template-columns: 1fr; }
+  .services-grid { grid-template-columns: 1fr; }
+  .about-layout { grid-template-columns: 1fr; gap: 48px; }
+  .contact-section { padding: 80px 24px; }
+  footer { padding: 24px; flex-direction: column; gap: 10px; text-align: center; }
+  .divider { margin: 0 24px; }
+}
+@media (max-width: 600px) {
+  .apps-grid { grid-template-columns: 1fr; }
+  .about-metrics { grid-template-columns: 1fr 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="blob blob1"></div>
+<div class="blob blob2"></div>
+<div class="blob blob3"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">Liora<span>.ai</span></div>
+  <div class="nav-links">
+    <a href="#apps">Продукты</a>
+    <a href="#services">Услуги</a>
+    <a href="#about">Обо мне</a>
+    <a href="#contact">Контакт</a>
+  </div>
+  <a href="#contact" class="nav-cta">Написать</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-badge reveal">
+      <span class="hero-badge-dot"></span>
+      AI-разработчик  ·  Регион 14  ·  Якутия
+    </div>
+    <h1 class="reveal reveal-delay-1">
+      <span class="line1">Внедряю AI</span>
+      <span class="line2">в жизнь и бизнес</span>
+    </h1>
+    <p class="hero-desc reveal reveal-delay-2">
+      Создаю <strong>AI-приложения для бизнеса</strong>, обучаю работе с нейросетями с нуля и помогаю компаниям автоматизировать процессы. Уже <strong>6 рабочих продуктов</strong> — на якутском и русском.
+    </p>
+    <div class="hero-cta reveal reveal-delay-3">
+      <a href="#contact" class="btn-primary">Написать в Telegram</a>
+      <a href="#apps" class="btn-ghost">Смотреть продукты →</a>
+    </div>
+  </div>
+</section>
+
+<!-- STATS BAR -->
+<div class="stats-bar">
+  <div class="stat-item reveal">
+    <div class="stat-num">6<span>+</span></div>
+    <div class="stat-label">рабочих приложений</div>
+  </div>
+  <div class="stat-item reveal reveal-delay-1">
+    <div class="stat-num">2<span>яз</span></div>
+    <div class="stat-label">русский и якутский</div>
+  </div>
+  <div class="stat-item reveal reveal-delay-2">
+    <div class="stat-num">14</div>
+    <div class="stat-label">Регион — Якутия</div>
+  </div>
+  <div class="stat-item reveal reveal-delay-3">
+    <div class="stat-num">0<span>→</span></div>
+    <div class="stat-label">обучаю с нуля</div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- APPS -->
+<section id="apps">
+  <div class="section-eyebrow reveal">// продукты</div>
+  <h2 class="section-title reveal reveal-delay-1">Уже <span class="hl">работает</span></h2>
+  <div class="apps-grid">
+    <div class="app-card reveal">
+      <div class="app-icon">🔧</div>
+      <div class="app-name">Убаай Дьукка</div>
+      <div class="app-desc">Карманный автомеханик. Диагностирует по звуку и фото, находит лучший сервис в Якутске, объясняет простым языком.</div>
+      <span class="app-tag">RU · SAH</span>
+    </div>
+    <div class="app-card reveal reveal-delay-1">
+      <div class="app-icon">💬</div>
+      <div class="app-name">Хайдагый Кини?</div>
+      <div class="app-desc">AI-психолог анализирует переписку и даёт глубокий разбор отношений. Работает на якутском и русском.</div>
+      <span class="app-tag">RU · SAH</span>
+    </div>
+    <div class="app-card reveal reveal-delay-2">
+      <div class="app-icon">🌙</div>
+      <div class="app-name">ТҮҮЛ</div>
+      <div class="app-desc">Толкователь снов через мудрость предков. Голосовой ввод, якутская культура, AI-интерпретация.</div>
+      <span class="app-tag">RU · SAH</span>
+    </div>
+    <div class="app-card reveal reveal-delay-1">
+      <div class="app-icon">🎵</div>
+      <div class="app-name">TOYUK</div>
+      <div class="app-desc">AI-генератор якутских песен и минусовок. Сохраняет культуру через современные технологии.</div>
+      <span class="app-tag">SAH</span>
+    </div>
+    <div class="app-card reveal reveal-delay-2">
+      <div class="app-icon">💕</div>
+      <div class="app-name">Эппиэт</div>
+      <div class="app-desc">Игра для пар на якутском. Вопросы об отношениях, близости и понимании друг друга.</div>
+      <span class="app-tag">SAH</span>
+    </div>
+    <div class="app-card reveal reveal-delay-3">
+      <div class="app-icon">🌿</div>
+      <div class="app-name">Я-Ресурс</div>
+      <div class="app-desc">Пространство внутренней поддержки и спокойствия. Для тех, кто хочет опереться на себя.</div>
+      <span class="app-tag">RU</span>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- SERVICES -->
+<section id="services">
+  <div class="section-eyebrow reveal">// услуги</div>
+  <h2 class="section-title reveal reveal-delay-1">Чем могу <span class="hl">помочь</span></h2>
+  <div class="services-grid">
+    <div class="service-card reveal">
+      <div class="service-icon">⚙️</div>
+      <div class="service-num">01</div>
+      <div class="service-name">Разработка AI-приложения</div>
+      <div class="service-desc">Создаю рабочие AI-продукты под задачи вашего бизнеса — от идеи до запуска. Полный цикл: архитектура, код, дизайн.</div>
+      <div class="service-price">от 30 000 ₽</div>
+    </div>
+    <div class="service-card reveal reveal-delay-1">
+      <div class="service-icon">🎓</div>
+      <div class="service-num">02</div>
+      <div class="service-name">Обучение с нуля</div>
+      <div class="service-desc">Объясняю как работают нейросети и AI-инструменты — понятно, практично, без лишней теории. Для людей без технического фона.</div>
+      <div class="service-price">от 2 000 ₽</div>
+    </div>
+    <div class="service-card reveal reveal-delay-1">
+      <div class="service-icon">💼</div>
+      <div class="service-num">03</div>
+      <div class="service-name">AI-консультация для бизнеса</div>
+      <div class="service-desc">Разбираем как внедрить AI в ваши процессы, какие инструменты подойдут и с чего начать. Конкретный план действий.</div>
+      <div class="service-price">от 3 000 ₽/час</div>
+    </div>
+    <div class="service-card reveal reveal-delay-2">
+      <div class="service-icon">🤖</div>
+      <div class="service-num">04</div>
+      <div class="service-name">Автоматизация процессов</div>
+      <div class="service-desc">Нахожу рутинные задачи в вашем бизнесе и автоматизирую их с помощью AI. Экономия времени и ресурсов.</div>
+      <div class="service-price">договорная</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="about-layout">
+    <div class="about-text">
+      <div class="section-eyebrow reveal">// кто я</div>
+      <h2 class="section-title reveal reveal-delay-1" style="margin-bottom:28px">AI-разработчик<br><span class="hl">из Якутии</span></h2>
+      <p class="reveal reveal-delay-2">Я не заканчивала IT-университет и не работала в крупной компании. Я просто <strong>начала делать</strong> — и не остановилась.</p>
+      <p class="reveal reveal-delay-2">За последний год самостоятельно создала 6 рабочих AI-приложений для якутского рынка. Каждое решает реальную задачу реальных людей — на их языке и в их контексте.</p>
+      <p class="reveal reveal-delay-3">Понимаю якутский рынок изнутри. Умею объяснить сложное просто. <strong>Обучаю с нуля</strong> — так, чтобы человек сам мог применять AI в работе и жизни.</p>
+      <div class="about-pills reveal reveal-delay-3">
+        <span class="pill">AI-разработка</span>
+        <span class="pill">Обучение</span>
+        <span class="pill">Автоматизация</span>
+        <span class="pill">Якутский язык</span>
+        <span class="pill">Регион 14</span>
+        <span class="pill">Нейросети</span>
+        <span class="pill">Быстро учусь</span>
+      </div>
+    </div>
+    <div class="about-right">
+      <div class="quote-block reveal reveal-delay-1">
+        <blockquote>
+          Пока другие думают что это сложно — я уже сделала и запустила.
+        </blockquote>
+        <cite>— AI-разработчик · Якутия · Регион 14</cite>
+      </div>
+      <div class="about-metrics reveal reveal-delay-2">
+        <div class="metric-card">
+          <div class="metric-val">6<span>+</span></div>
+          <div class="metric-label">приложений</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-val">2<span>яз</span></div>
+          <div class="metric-label">RU + SAH</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-val">1<span>год</span></div>
+          <div class="metric-label">активной разработки</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-val">∞</div>
+          <div class="metric-label">идей в работе</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- CONTACT -->
+<div class="contact-section" id="contact">
+  <h2 class="contact-title reveal">
+    Давай создадим<br><span class="hl">что-то важное</span>
+  </h2>
+  <p class="contact-sub reveal reveal-delay-1">
+    Есть идея? Нужно приложение? Хочешь внедрить AI в бизнес или научиться с нуля? Напиши — разберёмся.
+  </p>
+  <div class="contact-links reveal reveal-delay-2">
+    <a href="https://t.me/lioraaisakha" class="contact-link primary" target="_blank">
+      <span class="icon">✈️</span> Telegram
+    </a>
+    <a href="mailto:mariivarom99@gmail.com" class="contact-link">
+      <span class="icon">✉️</span> mariivarom99@gmail.com
+    </a>
+    <a href="https://instagram.com/mariivvana" class="contact-link" target="_blank">
+      <span class="icon">📸</span> Instagram
+    </a>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <p>© 2025 <span class="accent-text">Liora.ai</span> — AI-разработчик, Якутия · Регион 14</p>
+  <p>Сделано с <span class="accent-text">♥</span> и нейросетью</p>
+</footer>
+
+<script>
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+  reveals.forEach(el => observer.observe(el));
+
+  // Smooth scroll for nav links
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      const target = document.querySelector(a.getAttribute('href'));
+      if (target) {
+        e.preventDefault();
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  });
+
+  // Nav scroll effect
+  const nav = document.querySelector('nav');
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 60) {
+      nav.style.borderBottomColor = 'rgba(124,106,247,0.12)';
+    } else {
+      nav.style.borderBottomColor = 'rgba(255,255,255,0.04)';
+    }
+  });
+</script>
+</body>
+</html>
